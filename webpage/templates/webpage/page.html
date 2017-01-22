@@ -19,10 +19,39 @@
                 <p class="navbar-text">Visualisation Project</p>
             </div>
         </nav>
-        
+ 
+<div id="body">  
+<div id="charts">
+  <div id="hour-chart" class="chart">
+    <div class="title">Time of Day</div>
+  </div>
+  <div id="delay-chart" class="chart">
+    <div class="title">Arrival Delay (min.)</div>
+  </div>
+  <div id="distance-chart" class="chart">
+    <div class="title">Distance (mi.)</div>
+  </div>
+  <div id="date-chart" class="chart">
+    <div class="title">Date</div>
+  </div>
+</div>
+
+<aside id="totals"><span id="active">-</span> of <span id="total">-</span> flights selected.</aside>
+
+<div id="lists">
+  <div id="flight-list" class="list"></div>
+</div>
+</div>      
 <script>
-    
-d3.csv("/static/css/flights-3m.csv", function(flights) {
+// d3.text("/static/css/flights-3m.csv", function(text){
+ 
+//    var data = d3.csv.parseRows(text);
+//    //do your plotting with data
+//    console.log(data);
+
+// });
+
+d3.csv("/static/css/flights-3m.csv", function(error, flights) {
 
   // Various formatters.
   var formatNumber = d3.format(",d"),
