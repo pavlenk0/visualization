@@ -13,45 +13,40 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.min.js"></script>
         
     </head>
+    <title>Vizualization</title>
     <body>
         <nav class="navbar navbar-inverse">
             <div class="container">
                 <p class="navbar-text">Visualisation Project</p>
             </div>
         </nav>
- 
-<div id="body">  
+    
+<div id = "h1">With the help of th d3.js and crossfilter.js I created the visualization project</div>
+<div id="body"> 
 <div id="charts">
-  <div id="hour-chart" class="chart">
-    <div class="title">Time of Day</div>
+  <div id="female-chart" class="chart">
+    <div class="title">Females</div>
   </div>
-  <div id="delay-chart" class="chart">
-    <div class="title">Arrival Delay (min.)</div>
+  <div id="tfare-chart" class="chart">
+    <div class="title">Ticket fare</div>
   </div>
-  <div id="distance-chart" class="chart">
-    <div class="title">Distance (mi.)</div>
+  <div id="pclass-chart" class="chart">
+    <div class="title">Passenger class</div>
   </div>
-  <div id="date-chart" class="chart">
-    <div class="title">Date</div>
+  <div id="age-chart" class="chart">
+    <div class="title">Age</div>
   </div>
 </div>
 
-<aside id="totals"><span id="active">-</span> of <span id="total">-</span> flights selected.</aside>
+<aside id="totals"><span id="active">-</span> of <span id="total">-</span> passengers selected.</aside>
 
 <div id="lists">
-  <div id="flight-list" class="list"></div>
+  <div id="passenger-list" class="list"></div>
 </div>
 </div>      
 <script>
-// d3.text("/static/css/flights-3m.csv", function(text){
- 
-//    var data = d3.csv.parseRows(text);
-//    //do your plotting with data
-//    console.log(data);
 
-// });
-
-d3.csv("/static/css/flights-3m.csv", function(error, flights) {
+d3.csv("static/css/titanic(parse).csv", function(passengers) {
 
   // Various formatters.
   var formatNumber = d3.format(",d"),
@@ -59,100 +54,83 @@ d3.csv("/static/css/flights-3m.csv", function(error, flights) {
       formatDate = d3.time.format("%B %d, %Y"),
       formatTime = d3.time.format("%I:%M %p");
 
-  // A nest operator, for grouping the flight list.
-  var nestByDate = d3.nest()
-      .key(function(d) { return d3.time.day(d.date); });
+  // A nest operator, for grouping the passenger list.
+  var nestByClass = d3.nest()
+      .key(function(d) { return d3.pclass; });
 
   // A little coercion, since the CSV is untyped.
-  flights.forEach(function(d, i) {
-    d.index = i;
-    d.date = parseDate(d.date);
-    d.delay = +d.delay;
-    d.distance = +d.distance;
+  passengers.forEach(function(d, i) {
+    d.index = i;  
   });
 
   // Create the crossfilter for the relevant dimensions and groups.
-  var flight = crossfilter(flights),
-      all = flight.groupAll(),
-      date = flight.dimension(function(d) { return d.date; }),
-      dates = date.group(d3.time.day),
-      hour = flight.dimension(function(d) { return d.date.getHours() + d.date.getMinutes() / 60; }),
-      hours = hour.group(Math.floor),
-      delay = flight.dimension(function(d) { return Math.max(-60, Math.min(149, d.delay)); }),
-      delays = delay.group(function(d) { return Math.floor(d / 10) * 10; }),
-      distance = flight.dimension(function(d) { return Math.min(1999, d.distance); }),
-      distances = distance.group(function(d) { return Math.floor(d / 50) * 50; });
+  var passenger = crossfilter(passengers),
+      i = 0,
+      all = passenger.groupAll(),
+      age = passenger.dimension(function(d) {return Math.max(0, d.age);}),
+      ages = age.group(function(d) { return Math.floor(d); }),
+      female = passenger.dimension(function(d) {if (d.sex == 'female') {return d.age} else{return 90}; }),
+      females = female.group(function(d) { return d;}),
+      fare = passenger.dimension(function(d) {return Math.max(1, Math.min(550, d.fare)); }),
+      fares = fare.group(function(d) { return d;}),
+      pclass = passenger.dimension(function(d) { return Math.max(1, Math.min(3, d.pclass)); }),
+      pclasses = pclass.group(function(d) { return d; });
 
   var charts = [
 
     barChart()
-        .dimension(hour)
-        .group(hours)
+        .dimension(female)
+        .group(females)
       .x(d3.scale.linear()
-        .domain([0, 24])
-        .rangeRound([0, 10 * 24])),
+        .domain([0, 81])
+        .rangeRound([10, 2 * 81])),
 
     barChart()
-        .dimension(delay)
-        .group(delays)
+        .dimension(fare)
+        .group(fares)
       .x(d3.scale.linear()
-        .domain([-60, 150])
-        .rangeRound([0, 10 * 21])),
+        .domain([0, 550])
+        .rangeRound([0, 0.35 * 550])),
 
     barChart()
-        .dimension(distance)
-        .group(distances)
+        .dimension(pclass)
+        .group(pclasses)
       .x(d3.scale.linear()
-        .domain([0, 2000])
-        .rangeRound([0, 10 * 40])),
+        .domain([1, 3.1, 10])
+        .rangeRound([1, 50 * 4])),
 
     barChart()
-        .dimension(date)
-        .group(dates)
-        .round(d3.time.day.round)
-      .x(d3.time.scale()
-        .domain([new Date(2001, 0, 1), new Date(2001, 3, 1)])
-        .rangeRound([0, 10 * 90]))
-        .filter([new Date(2001, 1, 1), new Date(2001, 2, 1)])
-
+        .dimension(age)
+        .group(ages)
+      .x(d3.scale.linear()
+        .domain([0, 81])
+        .rangeRound([10, 8 * 81]))
   ];
 
   // Given our array of charts, which we assume are in the same order as the
-  // .chart elements in the DOM, bind the charts to the DOM and render them.
-  // We also listen to the chart's brush events to update the display.
+  // .chart elements in the DOM, bind the charts to the DOM and render them.  
   var chart = d3.selectAll(".chart")
       .data(charts)
       .each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });
 
   // Render the initial lists.
   var list = d3.selectAll(".list")
-      .data([flightList]);
+      .data([passengerList]);
 
   // Render the total.
   d3.selectAll("#total")
-      .text(formatNumber(flight.size()));
-
+      .text(formatNumber(passenger.size()));
   renderAll();
 
   // Renders the specified chart or list.
   function render(method) {
     d3.select(this).call(method);
   }
-
   // Whenever the brush moves, re-rendering everything.
   function renderAll() {
     chart.each(render);
     list.each(render);
     d3.select("#active").text(formatNumber(all.value()));
-  }
-
-  // Like d3.time.format, but faster.
-  function parseDate(d) {
-    return new Date(2001,
-        d.substring(0, 2) - 1,
-        d.substring(2, 4),
-        d.substring(4, 6),
-        d.substring(6, 8));
   }
 
   window.filter = function(filters) {
@@ -165,51 +143,45 @@ d3.csv("/static/css/flights-3m.csv", function(error, flights) {
     renderAll();
   };
 
-  function flightList(div) {
-    var flightsByDate = nestByDate.entries(date.top(40));
+  function passengerList(div) {
+    var passengersByClass = nestByClass.entries(pclass.top(50));
 
     div.each(function() {
-      var date = d3.select(this).selectAll(".date")
-          .data(flightsByDate, function(d) { return d.key; });
+      var pclass = d3.select(this).selectAll(".pclass")
+          .data(passengersByClass, function(d) { return d.key; });
 
-      date.enter().append("div")
-          .attr("class", "date")
-        .append("div")
-          .attr("class", "day")
-          .text(function(d) { return formatDate(d.values[0].date); });
+      pclass.enter().append("div")
+          .attr("class", "pclass")
+    
+      var passenger = pclass.order().selectAll(".passenger")
+          .data(function(d) { return d.values; }, function(d) { return d.index;});
 
-      date.exit().remove();
+      var passengerEnter = passenger.enter().append("div")
+          .attr("class", "passenger");
 
-      var flight = date.order().selectAll(".flight")
-          .data(function(d) { return d.values; }, function(d) { return d.index; });
+      passengerEnter.append("div")
+          .attr("class", "pclass")
+          .text(function(d) { return d.pclass; });
 
-      var flightEnter = flight.enter().append("div")
-          .attr("class", "flight");
+      passengerEnter.append("div")
+          .attr("class", "name")
+          .text(function(d) { return d.name; });
 
-      flightEnter.append("div")
-          .attr("class", "time")
-          .text(function(d) { return formatTime(d.date); });
+      passengerEnter.append("div")
+          .attr("class", "sex")
+          .text(function(d) { return d.sex; });
 
-      flightEnter.append("div")
-          .attr("class", "origin")
-          .text(function(d) { return d.origin; });
+      passengerEnter.append("div")
+          .attr("class", "fare")
+          .text(function(d) { return d.fare; });
 
-      flightEnter.append("div")
-          .attr("class", "destination")
-          .text(function(d) { return d.destination; });
+      passengerEnter.append("div")
+          .attr("class", "age")
+          .text(function(d) { return d.age; });
 
-      flightEnter.append("div")
-          .attr("class", "distance")
-          .text(function(d) { return formatNumber(d.distance) + " mi."; });
+      passenger.exit().remove();
 
-      flightEnter.append("div")
-          .attr("class", "delay")
-          .classed("early", function(d) { return d.delay < 0; })
-          .text(function(d) { return formatChange(d.delay) + " min."; });
-
-      flight.exit().remove();
-
-      flight.order();
+      passenger.order();
     });
   }
 
@@ -407,6 +379,5 @@ d3.csv("/static/css/flights-3m.csv", function(error, flights) {
 });
 
 </script>
-    
     </body>
 </html>

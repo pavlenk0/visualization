@@ -1,45 +1,23 @@
 .container {
   font-size: 32px;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin-top:0;
+  margin-bottom: 10;
 }
 
 @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,700);
 
 body {
   font-family: "Helvetica Neue";
-  margin: 40px auto;
-  width: 960px;
-  min-height: 2000px;
+  margin:  auto;
+  width: 1000px;
+  min-height: 1900px;
 }
-
 #body {
-  position: relative;
+  position: top;
 }
 
-footer {
-  padding: 2em 0 1em 0;
-  font-size: 12px;
-}
-
-h1 {
-  font-size: 96px;
-  margin-top: .3em;
-  margin-bottom: 0;
-}
-
-h1 + h2 {
-  margin-top: 0;
-}
-
-h2 {
-  font-weight: 400;
-  font-size: 28px;
-}
-
-h1, h2 {
-  font-family: "Yanone Kaffeesatz";
-  text-rendering: optimizeLegibility;
+#h1 {
+  font-size: 25px;
 }
 
 #body > p {
@@ -61,7 +39,7 @@ h1, h2 {
 .reset {
   padding-left: 1em;
   font-size: smaller;
-  color: #ccc;
+  color: #7FFFD4;
 }
 
 .background.bar {
@@ -69,7 +47,7 @@ h1, h2 {
 }
 
 .foreground.bar {
-  fill: steelblue;
+  fill: #008B8B;
 }
 
 .axis path, .axis line {
@@ -92,64 +70,59 @@ h1, h2 {
   stroke: #666;
 }
 
-#hour-chart {
-  width: 260px;
+#female-chart {
+  width: 250px;
 }
 
-#delay-chart {
-  width: 230px;
+#tfare-chart {
+  width: 250px;
 }
 
-#distance-chart {
-  width: 420px;
+#pclass-chart {
+  width: 250px;
 }
 
-#date-chart {
-  width: 920px;
+#age-chart {
+  width: 750px;
 }
 
-#flight-list {
+#passenger-list {
   min-height: 1024px;
 }
 
-#flight-list .date,
-#flight-list .day {
-  margin-bottom: .4em;
-}
-
-#flight-list .flight {
-  line-height: 1.5em;
-  background: #eee;
-  width: 640px;
+#passenger-list .passenger {
+  line-height: 2em;
+  background: #ADD8E6;
+  width: 750px;
   margin-bottom: 1px;
 }
 
-#flight-list .time {
-  color: #999;
-}
-
-#flight-list .flight div {
+#passenger-list .passenger div {
   display: inline-block;
   width: 100px;
 }
+#passenger-list div.name {
+  width: 400px;
+  padding-left: 10px;
+  text-align: left;
+}
 
-#flight-list div.distance,
-#flight-list div.delay {
-  width: 160px;
+#passenger-list div.sex {
+  width: 100px;
+  padding-left: 10px;
+  text-align: left;	
+}
+#passenger-list div.pas_class,
+#passenger-list div.fare,
+#passenger-list div.age{
+  width: 70px;
   padding-right: 10px;
   text-align: right;
 }
 
-#flight-list .early {
-  color: green;
-}
-
 aside {
   position: absolute;
-  left: 740px;
+  left: 760px;
   font-size: smaller;
   width: 220px;
 }
-
-
-
