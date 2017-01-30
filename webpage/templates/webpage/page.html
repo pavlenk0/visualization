@@ -7,36 +7,41 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="{% static 'css/webpage.css' %}">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
         <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.min.js"></script>
+        <script type="text/javascript" src="https://dc-js.github.io/dc.js/js/dc.js"></script>
         
     </head>
     <title>Vizualization</title>
-    <body>
-        <nav class="navbar navbar-inverse">
-            <div class="container">
-                <p class="navbar-text">Visualisation Project</p>
-            </div>
-        </nav>
-    
-<div id = "h1">With the help of th d3.js and crossfilter.js I created the visualization project</div>
+<body bgcolor="#BDB76B">
+
+<div class="container">
+		<h1>Visualisation Project</h1>
+</div>  
+
+<h4>With the help of th d3.js, dc.js and crossfilter.js I created the Titanic passengers <a href="https://raw.githubusercontent.com/pavlenk0/visualization/master/webpage/static/css/titanic(parse).csv">dataset</a> visualization project.</h4>
+
+<h4>You can also move the slider to filter data by age, ticket fare or passenger class.</h4>
+
 <div id="body"> 
 <div id="charts">
-  <div id="female-chart" class="chart">
-    <div class="title">Females</div>
-  </div>
+  
   <div id="tfare-chart" class="chart">
     <div class="title">Ticket fare</div>
   </div>
   <div id="pclass-chart" class="chart">
     <div class="title">Passenger class</div>
   </div>
+  <div id="sexPieChart">
+  	<div class="title">Sex</div>
+  </div>
   <div id="age-chart" class="chart">
     <div class="title">Age</div>
   </div>
+  
 </div>
+</div>
+
 
 <aside id="totals"><span id="active">-</span> of <span id="total">-</span> passengers selected.</aside>
 
@@ -69,21 +74,14 @@ d3.csv("static/css/titanic(parse).csv", function(passengers) {
       all = passenger.groupAll(),
       age = passenger.dimension(function(d) {return Math.max(0, d.age);}),
       ages = age.group(function(d) { return Math.floor(d); }),
-      female = passenger.dimension(function(d) {if (d.sex == 'female') {return d.age} else{return 90}; }),
-      females = female.group(function(d) { return d;}),
+      sex = passenger.dimension(function (d) {return d.sex}),
+      sexes = sex.group(function(d) { return d;}),
       fare = passenger.dimension(function(d) {return Math.max(1, Math.min(550, d.fare)); }),
       fares = fare.group(function(d) { return d;}),
       pclass = passenger.dimension(function(d) { return Math.max(1, Math.min(3, d.pclass)); }),
       pclasses = pclass.group(function(d) { return d; });
 
   var charts = [
-
-    barChart()
-        .dimension(female)
-        .group(females)
-      .x(d3.scale.linear()
-        .domain([0, 81])
-        .rangeRound([10, 2 * 81])),
 
     barChart()
         .dimension(fare)
@@ -107,6 +105,15 @@ d3.csv("static/css/titanic(parse).csv", function(passengers) {
         .rangeRound([10, 8 * 81]))
   ];
 
+  	var sexPieChart = dc.pieChart("#sexPieChart");
+
+    sexPieChart.width(120)
+            .height(120)
+            .innerRadius(25)
+            .dimension(sex)
+            .group(sexes.reduceCount())
+            .renderLabel(true)
+            .transitionDuration(0);
   // Given our array of charts, which we assume are in the same order as the
   // .chart elements in the DOM, bind the charts to the DOM and render them.  
   var chart = d3.selectAll(".chart")
@@ -120,6 +127,7 @@ d3.csv("static/css/titanic(parse).csv", function(passengers) {
   // Render the total.
   d3.selectAll("#total")
       .text(formatNumber(passenger.size()));
+  
   renderAll();
 
   // Renders the specified chart or list.
@@ -131,6 +139,7 @@ d3.csv("static/css/titanic(parse).csv", function(passengers) {
     chart.each(render);
     list.each(render);
     d3.select("#active").text(formatNumber(all.value()));
+    dc.renderAll();
   }
 
   window.filter = function(filters) {
@@ -144,7 +153,7 @@ d3.csv("static/css/titanic(parse).csv", function(passengers) {
   };
 
   function passengerList(div) {
-    var passengersByClass = nestByClass.entries(pclass.top(50));
+    var passengersByClass = nestByClass.entries(pclass.top(30));
 
     div.each(function() {
       var pclass = d3.select(this).selectAll(".pclass")
@@ -168,6 +177,10 @@ d3.csv("static/css/titanic(parse).csv", function(passengers) {
           .text(function(d) { return d.name; });
 
       passengerEnter.append("div")
+          .attr("class", "age")
+          .text(function(d) { return d.age; });
+
+      passengerEnter.append("div")
           .attr("class", "sex")
           .text(function(d) { return d.sex; });
 
@@ -175,9 +188,6 @@ d3.csv("static/css/titanic(parse).csv", function(passengers) {
           .attr("class", "fare")
           .text(function(d) { return d.fare; });
 
-      passengerEnter.append("div")
-          .attr("class", "age")
-          .text(function(d) { return d.age; });
 
       passenger.exit().remove();
 

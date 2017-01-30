@@ -1,29 +1,8 @@
-.container {
-  font-size: 32px;
-  margin-top:0;
-  margin-bottom: 10;
-}
-
-@import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,700);
-
 body {
+  margin: 30px auto;
   font-family: "Helvetica Neue";
-  margin:  auto;
-  width: 1000px;
-  min-height: 1900px;
-}
-#body {
-  position: top;
-}
-
-#h1 {
-  font-size: 25px;
-}
-
-#body > p {
-  line-height: 1.5em;
-  width: 640px;
-  text-rendering: optimizeLegibility;
+  width: 750px;
+  
 }
 
 #charts {
@@ -32,22 +11,22 @@ body {
 
 .chart {
   display: inline-block;
-  height: 151px;
+  height: 150px;
   margin-bottom: 20px;
 }
 
 .reset {
   padding-left: 1em;
   font-size: smaller;
-  color: #7FFFD4;
+  color: #708090;
 }
 
 .background.bar {
-  fill: #ccc;
+  fill: #B0E0E6;
 }
 
 .foreground.bar {
-  fill: #008B8B;
+  fill: steelblue;
 }
 
 .axis path, .axis line {
@@ -57,21 +36,17 @@ body {
 }
 
 .axis text {
-  font: 10px sans-serif;
+  font: 9px sans-serif;
 }
 
 .brush rect.extent {
-  fill: steelblue;
+  fill: #4169E1;
   fill-opacity: .125;
 }
 
 .brush .resize path {
   fill: #eee;
   stroke: #666;
-}
-
-#female-chart {
-  width: 250px;
 }
 
 #tfare-chart {
@@ -82,8 +57,12 @@ body {
   width: 250px;
 }
 
+#sexPieChart {
+  width: 200px;
+}
+
 #age-chart {
-  width: 750px;
+  width: 250px;
 }
 
 #passenger-list {
@@ -92,14 +71,13 @@ body {
 
 #passenger-list .passenger {
   line-height: 2em;
-  background: #ADD8E6;
-  width: 750px;
+  background: #4682B4;
+  width: 650px;
   margin-bottom: 1px;
 }
 
 #passenger-list .passenger div {
   display: inline-block;
-  width: 100px;
 }
 #passenger-list div.name {
   width: 400px;
@@ -112,17 +90,42 @@ body {
   padding-left: 10px;
   text-align: left;	
 }
-#passenger-list div.pas_class,
-#passenger-list div.fare,
-#passenger-list div.age{
-  width: 70px;
+#passenger-list div.pas_class{
+  width: 50px;
   padding-right: 10px;
-  text-align: right;
+  text-align: top; 
+}
+
+#passenger-list div.fare{
+  width: 50px;
+  padding-right: 10px;
+  text-align: left;
+}
+
+#passenger-list div.age{
+  width: 50px;
+  padding-right: 10px;
+  text-align: left;
 }
 
 aside {
-  position: absolute;
-  left: 760px;
+  position: relative;
+  left: 460px;
   font-size: smaller;
   width: 220px;
 }
+
+div.dc-chart {
+  float: right; }
+
+.dc-chart .pie-slice {
+  fill: #fff;
+  font-size: 11px;
+  cursor: pointer; }
+.dc-chart .pie-slice :hover, .dc-chart .pie-slice.highlight {
+    fill-opacity: .5; }
+
+.dc-chart .deselected path, .dc-chart .deselected circle {
+  stroke: none;
+  fill-opacity: .6;
+  fill: #B0E0E6; }
